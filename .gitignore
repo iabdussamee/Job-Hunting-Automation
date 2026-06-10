@@ -1,0 +1,12 @@
+# Credentials and local configuration
+.env
+*.env
+
+# Local database and cache
+*.db
+*.sqlite3
+
+# Python virtual environment
+venv/
+__pycache__/
+*.pyc
