@@ -32,14 +32,17 @@ generates cover letters, finds recruiter emails, and keeps a live Notion dashboa
 
 ## Installation
 
+## Installation
+
+### Linux / Mac
+
 ```bash
-# 1. Clone / download the job_hunter folder
+# 1. Enter the project folder
 cd job_hunter
 
-# 2. Create a virtual environment (recommended)
+# 2. Create and activate a virtual environment
 python -m venv venv
-source venv/bin/activate        # Linux/Mac
-# venv\Scripts\activate         # Windows
+source venv/bin/activate
 
 # 3. Install dependencies
 pip install -r requirements.txt
@@ -47,6 +50,48 @@ pip install -r requirements.txt
 # 4. Copy the config template
 cp .env.example .env
 ```
+
+### Windows (Command Prompt)
+
+```cmd
+:: 1. Enter the project folder
+cd job_hunter
+
+:: 2. Create virtual environment
+python -m venv venv
+
+:: 3. Activate it
+venv\Scripts\activate
+
+:: 4. Install dependencies
+pip install -r requirements.txt
+
+:: 5. Copy the config template
+copy .env.example .env
+```
+
+### Windows (PowerShell)
+
+```powershell
+# If you get a scripts execution error, run this once first:
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# 1. Enter the project folder
+cd job_hunter
+
+# 2. Create and activate virtual environment
+python -m venv venv
+venv\Scripts\Activate.ps1
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Copy the config template
+Copy-Item .env.example .env
+```
+
+> **Always activate the venv before running any commands.**  
+> You'll know it's active when you see `(venv)` at the start of your prompt.
 
 ---
 
@@ -201,16 +246,44 @@ This does everything in one shot: scrape → AI score → cover letters → recr
 
 ### Run automatically every day
 
+### Linux / Mac — background process
 ```bash
-# Foreground (Ctrl+C to stop)
-python main.py schedule
-
-# Background (Linux/Mac — keeps running after terminal closes)
 nohup python main.py schedule > scheduler.log 2>&1 &
+```
 
-# Or use cron directly (no scheduler process needed):
-# Add this line with: crontab -e
-# 0 7 * * * cd /path/to/job_hunter && /path/to/venv/bin/python main.py run >> cron.log 2>&1
+Check if it's running:
+```bash
+tail -f scheduler.log
+```
+
+### Linux / Mac — cron (recommended)
+```bash
+crontab -e
+```
+Add this line:
+```
+0 7 * * * cd /path/to/job_hunter && /path/to/venv/bin/python main.py run >> cron.log 2>&1
+```
+
+### Windows — Task Scheduler
+
+1. Open **Task Scheduler** (search in Start menu)
+2. Click **Create Basic Task**
+3. Name: `Job Hunter`
+4. Trigger: **Daily** at 7:00 AM
+5. Action: **Start a program**
+6. Program: `C:\path\to\job_hunter\venv\Scripts\python.exe`
+7. Arguments: `main.py run`
+8. Start in: `C:\path\to\job_hunter`
+9. Click **Finish**
+
+### Windows — run in background manually
+```cmd
+:: Command Prompt
+start /b python main.py schedule > scheduler.log 2>&1
+
+:: PowerShell
+Start-Process python -ArgumentList "main.py schedule" -RedirectStandardOutput scheduler.log -WindowStyle Hidden
 ```
 
 ---
